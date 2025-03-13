@@ -18,7 +18,9 @@ import com.starrocks.connector.flink.row.sink.StarRocksGenericRowTransformer;
 import com.starrocks.connector.flink.row.sink.StarRocksIRowTransformer;
 import com.starrocks.connector.flink.row.sink.StarRocksSinkRowBuilder;
 import com.starrocks.connector.flink.table.sink.SinkFunctionFactory;
+import com.starrocks.connector.flink.table.sink.StarRocksSinkDynamicRowDataWithMeta;
 import com.starrocks.connector.flink.table.sink.StarRocksSinkOptions;
+import com.starrocks.connector.flink.table.sink.v2.RecordSerializationSchema;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.table.api.TableSchema;
 
@@ -58,6 +60,15 @@ public class StarRocksSink {
      */
     public static SinkFunction<String> sink(StarRocksSinkOptions sinkOptions) {
         return SinkFunctionFactory.createSinkFunction(sinkOptions);
+    }
+
+    /**
+     * Create a StarRocks DataStream sink with dynamic update column.
+     * @param sinkOptions   StarRocksSinkOptions as the document listed, such as jdbc-url, load-url, batch size and maximum retries
+     * @return SinkFunction          SinkFunction that could be add to a stream.
+     */
+    public static <T extends StarRocksSinkDynamicRowDataWithMeta> SinkFunction<T> dynamicSink(StarRocksSinkOptions sinkOptions) {
+        return SinkFunctionFactory.createDynamicSinkFunction(sinkOptions);
     }
 
     private StarRocksSink() {}

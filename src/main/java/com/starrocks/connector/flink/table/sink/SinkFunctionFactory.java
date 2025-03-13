@@ -18,6 +18,7 @@
 
 package com.starrocks.connector.flink.table.sink;
 
+import com.starrocks.connector.flink.manager.StarRocksSinkManager;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.flink.table.data.RowData;
 
@@ -34,7 +35,9 @@ import org.slf4j.LoggerFactory;
 
 import static com.starrocks.data.load.stream.StreamLoadUtils.isStarRocksSupportTransactionLoad;
 
-/** Create sink function according to the configuration. */
+/**
+ * Create sink function according to the configuration.
+ */
 public class SinkFunctionFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(SinkFunctionFactory.class);
@@ -53,7 +56,8 @@ public class SinkFunctionFactory {
     public static void detectStarRocksFeature(StarRocksSinkOptions sinkOptions) {
         try {
             boolean supportTransactionLoad = isStarRocksSupportTransactionLoad(
-                    sinkOptions.getLoadUrlList(), sinkOptions.getConnectTimeout(), sinkOptions.getUsername(), sinkOptions.getPassword());
+                    sinkOptions.getLoadUrlList(), sinkOptions.getConnectTimeout(), sinkOptions.getUsername(),
+                    sinkOptions.getPassword());
             sinkOptions.setSupportTransactionStreamLoad(supportTransactionLoad);
             if (supportTransactionLoad) {
                 LOG.info("StarRocks supports transaction load");
@@ -122,6 +126,12 @@ public class SinkFunctionFactory {
             default:
                 throw new UnsupportedOperationException("Unsupported sink type " + sinkVersion.name());
         }
+    }
+
+    public static <T extends StarRocksSinkDynamicRowDataWithMeta> StarRocksDynamicColumnSinkFunction<T> createDynamicSinkFunction(
+            StarRocksSinkOptions sinkOptions) {
+        // only for v1
+        return new StarRocksDynamicColumnSinkFunction<T>(sinkOptions, new StarRocksSinkManager(sinkOptions, null));
     }
 
     public static StarRocksSink<RowData> createSink(

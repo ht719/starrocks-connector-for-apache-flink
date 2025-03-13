@@ -78,6 +78,11 @@ public class StarRocksDynamicSinkFunction<T> extends StarRocksDynamicSinkFunctio
         this.sinkOptions = sinkOptions;
     }
 
+    public StarRocksDynamicSinkFunction(StarRocksSinkOptions sinkOptions, StarRocksSinkManager sinkManager) {
+        this.sinkManager = sinkManager;
+        this.sinkOptions = sinkOptions;
+    }
+
     @Override
     public void open(Configuration parameters) throws Exception {
         super.open(parameters);
