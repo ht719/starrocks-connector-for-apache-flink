@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -131,6 +132,12 @@ public class StarRocksSinkManager implements Serializable {
         init(flinkSchema);
     }
 
+    public StarRocksSinkManager(StarRocksSinkOptions sinkOptions) {
+        this.sinkOptions = sinkOptions;
+        this.jdbcConnProvider = null;
+        this.starrocksQueryVisitor = null;
+    }
+
 
     protected void init(TableSchema schema) {
         validateTableStructure(schema);
@@ -163,7 +170,10 @@ public class StarRocksSinkManager implements Serializable {
         readDataTimeMs = runtimeCtx.getMetricGroup().histogram(HISTOGRAM_READ_DATA_TIME_MS, new DescriptiveStatisticsHistogram(sinkOptions.getSinkHistogramWindowSize()));
         writeDataTimeMs = runtimeCtx.getMetricGroup().histogram(HISTOGRAM_WRITE_DATA_TIME_MS, new DescriptiveStatisticsHistogram(sinkOptions.getSinkHistogramWindowSize()));
         loadTimeMs = runtimeCtx.getMetricGroup().histogram(HISTOGRAM_LOAD_TIME_MS, new DescriptiveStatisticsHistogram(sinkOptions.getSinkHistogramWindowSize()));
-        starrocksStreamLoadVisitor.open(jsonWrapper);
+
+        if (Objects.nonNull(this.starrocksStreamLoadVisitor)) {
+            starrocksStreamLoadVisitor.open(jsonWrapper);
+        }
     }
 
     public void startAsyncFlushing() {

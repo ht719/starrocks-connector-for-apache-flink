@@ -1,5 +1,6 @@
 package com.starrocks.connector.flink.table.sink;
 
+import com.starrocks.connector.flink.manager.StarRocksDynamicSinkManager;
 import com.starrocks.connector.flink.manager.StarRocksSinkManager;
 import org.apache.flink.runtime.state.FunctionInitializationContext;
 import org.apache.flink.runtime.state.FunctionSnapshotContext;
@@ -7,8 +8,7 @@ import org.apache.flink.runtime.state.FunctionSnapshotContext;
 public class StarRocksDynamicColumnSinkFunction<T extends StarRocksSinkDynamicRowDataWithMeta>
         extends StarRocksDynamicSinkFunction<T> {
 
-    public StarRocksDynamicColumnSinkFunction(StarRocksSinkOptions sinkOptions,
-                                              StarRocksSinkManager sinkManager) {
+    public StarRocksDynamicColumnSinkFunction(StarRocksSinkOptions sinkOptions, StarRocksDynamicSinkManager sinkManager) {
         super(sinkOptions, sinkManager);
     }
 

@@ -18,6 +18,7 @@
 
 package com.starrocks.connector.flink.table.sink;
 
+import com.starrocks.connector.flink.manager.StarRocksDynamicSinkManager;
 import com.starrocks.connector.flink.manager.StarRocksSinkManager;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.flink.table.data.RowData;
@@ -131,7 +132,8 @@ public class SinkFunctionFactory {
     public static <T extends StarRocksSinkDynamicRowDataWithMeta> StarRocksDynamicColumnSinkFunction<T> createDynamicSinkFunction(
             StarRocksSinkOptions sinkOptions) {
         // only for v1
-        return new StarRocksDynamicColumnSinkFunction<T>(sinkOptions, new StarRocksSinkManager(sinkOptions, null));
+        StarRocksDynamicSinkManager sinkManager = new StarRocksDynamicSinkManager(sinkOptions, null);
+        return new StarRocksDynamicColumnSinkFunction<>(sinkOptions, sinkManager);
     }
 
     public static StarRocksSink<RowData> createSink(
